@@ -12,10 +12,14 @@ bitcoin accounts associated with specific names or emails, and
 mapping transactions related to those accounts in a graphical confluence network.
 
 
+Cloning the repository:
+    git clone https://github.com/coleplante16/Bitcoin-Analyzer/.git
 
 QUICK START:
-1.  To begin, ensure you have the proper dependencies installed. (pip install -r requirements.txt)
-2.  You may run this program from the terminal or a python console. If run through terminal, please
+1.  To begin, ensure you have the proper dependencies installed. (pip install -r requirements.txt). 
+    You will also need to download yEd if you would like to view the graphical confluence networks 
+    of transactions.
+3.  You may run this program from the terminal or a python console. If run through terminal, please
     change the final line from 'welcome()' to 'main()' as the welcome message is not yet compatible
     with a terminal. You may also need to add quotation marks to your inputs when executing through
     a terminal. (python3 Bitcoin\ Analyzer.txt)
