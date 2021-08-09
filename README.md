@@ -29,8 +29,10 @@ QUICK START:
 
 Color Code:
 Below you will find a list of text colors and their meanings:
-1.  Blue: User input prompt. Links also appear blue.
-2.  Yellow:
+1.  Blue: 
+    User input prompt. 
+    Links also appear blue.
+3.  Yellow:
         Main menu: Partially complete option.
         While executing program: Fetching results, please wait.
 3.  Green: informational text
