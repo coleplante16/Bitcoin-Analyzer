@@ -1,0 +1,9 @@
+BeautifulSoup4
+requests
+colored
+pandas
+numpy
+pyyed
+html5lib
+re
+
