@@ -67,7 +67,6 @@ def account():
     print('5. Quit')
     choice = input(colored('\nPlease enter your choice (1-5):\n', 'blue'))
 
-    # Make choices 1 and 2 separate files
 
     if choice == '1':
         print(address)

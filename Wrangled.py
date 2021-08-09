@@ -63,7 +63,14 @@ def Wrangled(transactions3, transactions, address):
             first1 = last1 - 5
             del i[first1:last1]
         var4.append(i)
-    print(var4)
+
+    for subList in var4:
+        position = 0
+        length = len(subList)
+        for word in subList:
+            position = position + 1
+            if word == 'BTC' and position < length:
+                subList.insert(position, 'To')
 
 # Made Data Frame for Display
     column_names2 = []
@@ -71,7 +78,7 @@ def Wrangled(transactions3, transactions, address):
     for i in var4:
         column_names2 += i[::2]
         rows += i[1::2]
-    rows.append(' ')
+    #rows.append()
     transactionsChart = pandas.DataFrame(rows, column_names2)
     print(transactionsChart)
 

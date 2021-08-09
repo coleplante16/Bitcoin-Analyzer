@@ -21,34 +21,99 @@ def export_yEd(address, var4):
 # add nodes (addresses) while passing over existing nodes (NEEDS WORK)
 # add edges with labels as amount transferred
             for word in i:
+#insert scratch14 if necessary
                 if word == 'From':
+                    sendAcctNoIndex = i.index(word)
+                    sendAcctNoIndex += 1
+                    sendAcctNo = i[sendAcctNoIndex]
+                    amtSpentIndex = i.index(word)
+                    amtSpentIndex += 2
+                    amtSpent = i[amtSpentIndex]
+                if word == 'To':
                     try:
-                        w = i.index(word)
-                        w += 1
-                        print("\nw:" + str(w))
-                        linkChart.add_node((i[w]), font_family='Dialog')
-                        x = w+3
-                        print('\nx:', +str(x))
-                        linkChart.add_node((i[x]), font_family='Dialog')
-                        l = w + 1
-                        print('\nl:', + str(l))
-                        linkChart.add_edge(i[w], i[x], label = l, font_family='Dialog')
+                        receiveAcctNoIndex = i.index(word)
+                        receiveAcctNoIndex += 1
+                        receiveAcctNo = i[receiveAcctNoIndex]
                     except:
                         pass
-
+                    try:
+                        amtSentindex = i.index(word)
+                        amtSentindex += 2
+                        amtSent = i[amtSentindex]
+                    except:
+                        pass
+                    try:
+                        linkChart.add_node(str(sendAcctNo) + '\nSpent: ' + str(amtSpent), font_family='Dialog')
+                        linkChart.add_node(str(receiveAcctNo), font_family='Dialog')
+                        linkChart.add_edge(str(sendAcctNo), str(receiveAcctNo), label=str(amtSent))
+                    except RuntimeWarning:
                         try:
-                            w = i.index(word)
-                            l = w + 1
-                            x = w + 4
-                            w += 1
-                            linkChart.add_node(i[x], font_family='Dialog')
-                            linkChart.add_edge(i[w], i[x], label = l)
-                        except:
-                            l = w + 1
-                            x = w + 4
-                            w += 1
-                            linkChart.add_edge(i[w], i[x], label = l)
+                            linkChart.add_node(receiveAcctNo, font_family='Dialog')
+                            linkChart.add_edge(str(sendAcctNo), str(receiveAcctNo), label=str(amtSent))
+                        except RuntimeWarning:
+                            try:
+                                linkChart.add_node(str(sendAcctNo) + '\nSpent: ' + str(amtSpent), font_family='Dialog')
+                                linkChart.add_edge(str(sendAcctNo), str(receiveAcctNo), label=str(amtSent))
+                            except RuntimeWarning:
+                                try:
+                                    linkChart.add_edge(str(sendAcctNo), str(receiveAcctNo), label=str(amtSent))
+                                except RuntimeWarning:
+                                    pass
 
-        filePath = r'/Users/cole_plante/Desktop/' + str(address) + '.graphml'
-        print(filePath)
-        linkChart.write_graph(filePath)
+
+        linkChart.write_graph(address, + '.graphml')
+    else:
+        print(colored('\nWhat would you like to do next?', 'green'))
+        print('1. Search for this account online.')
+        print('2. Find a different account.')
+        print('3. Main Menu')
+        print('4. Quit')
+        choice = input(colored('\nPlease enter your choice (1-4):\n', 'blue'))
+        if choice == 1:
+            print(address)
+            URL = 'https://www.allprivatekeys.com/btc/' + address + '#pills-Forum'
+            r = requests.get(URL)
+            soup = BeautifulSoup(r.content, 'html5lib')
+            acctInfo = str(soup.find_all('div', attrs={'class': 'media text-muted pt-3'}))
+            potentialLink = (re.findall(r'(https?://\S+)', acctInfo)) + (re.findall(r'(https?://\S+)', acctInfo))
+            if not potentialLink:
+                print('Sorry, we couldn\'t find the account mentioned anywhere...')
+                quit()
+            potentialLinkstr = ''
+            for i in potentialLink:
+                potentialLinkstr += i
+            potentialLinkstr = potentialLinkstr.replace("</a><br/>", ' ')
+            potentialLinkstr = potentialLinkstr.replace('"', ' ')
+
+            # Make List and Display Search Results
+            potentialLink = list(potentialLinkstr.split(' '))
+            print('\nResults:\n \n', potentialLink)
+
+            # Export as CSV
+            export = input(colored('\nWould you like this exported as a csv file? (Y/N):\n', 'blue'))
+            if export.upper() == 'Y' or 'YES':
+                dict = {'Bitcoin address found on the following sites:': potentialLink}
+                df = pandas.DataFrame(dict)
+                df.to_csv(address + '.csv')
+                print(
+                    '\nYour potential links can be found in the same folder in which you saved this program.\n \nThe file is named:\n',
+                    account.address + '.csv')
+                print(colored(
+                    '\nBe Sure to note the poster\'s account or username, \nthey may be the one who owns the bitcoin account',
+                    'red'))
+            else:
+                quit()
+
+        elif choice == 2:
+            from account import account
+            account()
+
+        elif choice == 3:
+            from main import main
+            main()
+
+        elif choice == 4:
+            quit()
+
+        else:
+            print(colored('Sorry, that wasn\'t an option... quitting now.', 'red'))
