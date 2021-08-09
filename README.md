@@ -43,18 +43,23 @@ Below you will find a list of text colors and their meanings:
 
 
 EXAMPLE USES:
-1.  Names to search (main menu option 1):
-    Not functional yet.
-
+1.  Usernames to search (main menu option 1):
+    Powered by the Sherlock Project (https://github.com/sherlock-project/sherlock). Please see the user license in the Sherlock folder.
+    
 2.  Emails to search (main menu option 2):
-    NOTICE: Users may need to remove "&amp..." from links as google appends additional information to links
+    NOTICES: 
+            Users may need to remove "&amp..." from links as google appends additional information to links
+            If you wish to use the haveibeenpwned functionality, please purchase a API key from https://haveibeenpwned.com/API/Key
+    
     1.  mr.xtraf@gmail.com
     2.  carl_alberto@zohomail.com
     3.  lukanvibes001@gmail.com
     4.  stewartrhiannon488@gmail.com
 
 3.  BTC addresses to examine:
-    NOTICE: Module not yet completed, will only show most recent transaction.
+    NOTICE: 
+           Module not yet completed, will only show most recent transaction.
+           
     1.  1NEh2qQaKkxb8DWuPTuFLsxF2gxWeNrvAH
     2.  3GVpMEso5wdDJxwNPQEXjm2FNj5BcDxrsW
     3.  1PusX7fKJorWWfH9NVrSmvSQr76tBqMknk
