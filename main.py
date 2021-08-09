@@ -23,9 +23,9 @@ def main():
     if choice == 1:
         print('\nSorry, that option is still under construction. Please try a different option\n')
         user = input(colored('Please enter the username you believe is linked to a bitcoin account:\n', 'blue'))
-        sys.path.append('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/sherlock')
-        sys.path.append('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock')
-        sys.path.append('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/sherlock/resources')
+        #sys.path.append('___________/sherlock/sherlock')
+        #sys.path.append('___________/sherlock')
+        #sys.path.append('___________/sherlock/sherlock/resources')
         from sherlock import sherlock
         sherlock(user, ,start)
 
