@@ -21,14 +21,16 @@ def main():
     choice = int(input((colored('Enter your choice: \n', 'blue'))))
 
     if choice == 1:
-        print('\nSorry, that option is still under construction. Please try a different option\n')
-        user = input(colored('Please enter the username you believe is linked to a bitcoin account:\n', 'blue'))
-        #sys.path.append('___________/sherlock/sherlock')
-        #sys.path.append('___________/sherlock')
-        #sys.path.append('___________/sherlock/sherlock/resources')
-        from sherlock import sherlock
-        sherlock(user, ,start)
-
+        user = input(colored('\nPlease enter the username you believe is linked to a bitcoin account:\n', 'blue'))
+        print('')
+        
+#Enter path to sherlock.py here
+        script_descriptor = open('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/sherlock/sherlock.py')
+        
+        sherlock = script_descriptor.read()
+        sys.argv = [sherlock, user]
+        exec(sherlock)
+        
     elif choice == 2:
         import EmailSearch
         acctEmail()
