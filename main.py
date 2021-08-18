@@ -25,7 +25,7 @@ def main():
         print('')
         
 #Enter path to sherlock.py here
-        script_descriptor = open('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/sherlock/sherlock.py')
+        script_descriptor = open('')
         
         sherlock = script_descriptor.read()
         sys.argv = [sherlock, user]
