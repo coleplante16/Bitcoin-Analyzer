@@ -14,6 +14,8 @@ import sys
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from time import monotonic
 
+import argparse
+
 sys.path.append('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/sherlock')
 #sys.path.append('/Users/cole_plante/Documents/School/Summer 2021/Plante_Bitcoin-Analyzer/Python Files (.py format)/sherlock/')
 
@@ -445,18 +447,19 @@ def timeout_check(value):
 
 
 def main():
+    import argparse
+    from argparse import ArgumentParser
+    #version_string = f"%(prog)s {__version__}\n" +  \
+    #                 f"{requests.__description__}:  {requests.__version__}\n" + \
+    #                 f"Python:  {platform.python_version()}"
 
-    version_string = f"%(prog)s {__version__}\n" +  \
-                     f"{requests.__description__}:  {requests.__version__}\n" + \
-                     f"Python:  {platform.python_version()}"
-
-    parser = ArgumentParser(formatter_class=RawDescriptionHelpFormatter,
-                            description=f"{module_name} (Version {__version__})"
+    parser = argparse.ArgumentParser(formatter_class = argparse.RawDescriptionHelpFormatter,
+                            #description=f"{module_name} (Version {__version__})"
                             )
-    parser.add_argument("--version",
-                        action="version",  version=version_string,
-                        help="Display version information and dependencies."
-                        )
+    #parser.add_argument("--version",
+    #                    action="version",  version=version_string,
+    #                    help="Display version information and dependencies."
+    #                    )
     parser.add_argument("--verbose", "-v", "-d", "--debug",
                         action="store_true",  dest="verbose", default=False,
                         help="Display extra debugging information and metrics."
@@ -491,7 +494,7 @@ def main():
                         help="Load data from a JSON file or an online, valid, JSON file.")
     parser.add_argument("--timeout",
                         action="store", metavar='TIMEOUT',
-                        dest="timeout", type=timeout_check, default=None,
+                        #dest="timeout", type=timeout_check, default=None,
                         help="Time (in seconds) to wait for response to requests. "
                              "Default timeout is infinity. "
                              "A longer timeout will be more likely to get results from slow sites. "
@@ -525,18 +528,18 @@ def main():
     args = parser.parse_args()
 
     # Check for newer version of Sherlock. If it exists, let the user know about it
-    try:
-        r = requests.get("https://raw.githubusercontent.com/sherlock-project/sherlock/master/sherlock/sherlock.py")
+    #try:
+    #    r = requests.get("https://raw.githubusercontent.com/sherlock-project/sherlock/master/sherlock/sherlock.py")
 
-        remote_version = str(re.findall('__version__ = "(.*)"', r.text)[0])
-        local_version = __version__
+    #    remote_version = str(re.findall('__version__ = "(.*)"', r.text)[0])
+    #    local_version = __version__
 
-        if remote_version != local_version:
-            print("Update Available!\n" +
-                  f"You are running version {local_version}. Version {remote_version} is available at https://git.io/sherlock")
+    #    if remote_version != local_version:
+    #        print("Update Available!\n" +
+    #              f"You are running version {local_version}. Version {remote_version} is available at https://git.io/sherlock")
 
-    except Exception as error:
-        print(f"A problem occured while checking for an update: {error}")
+    #except Exception as error:
+    #    print(f"A problem occured while checking for an update: {error}")
 
 
     # Argument check
@@ -564,6 +567,7 @@ def main():
 
 
     # Create object with all information about sites we are aware of.
+    from sites import SitesInformation
     try:
         if args.local:
             sites = SitesInformation(os.path.join(os.path.dirname(__file__), 'resources/data.json'))
@@ -606,12 +610,14 @@ def main():
             sys.exit(1)
 
     # Create notify object for query results.
+    from Sherlocknotify import QueryNotifyPrint
     query_notify = QueryNotifyPrint(result=None,
                                     verbose=args.verbose,
                                     print_all=args.print_all,
                                     color=not args.no_color)
 
     # Run report on all specified users.
+    from sherlock import sherlock
     for username in args.username:
         results = sherlock(username,
                            site_data,
@@ -631,6 +637,7 @@ def main():
         else:
             result_file = f"{username}.txt"
 
+        from result import QueryStatus
         with open(result_file, "w", encoding="utf-8") as file:
             exists_counter = 0
             for website_name in results:
