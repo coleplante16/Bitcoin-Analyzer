@@ -1,13 +1,4 @@
-# Bitcoin-Analyzer
-This project was completed in partial fulfilment of the requirements
-for a masters degree in cybersecurity at Mercyhurst University.
-
-                          █████████
-                          █▄─▀█▀─▄█
-                          ██─█▄█─██
-                          ▀▄▄▄▀▄▄▄▀
-
-Welcome to the Bitcoin analyzer. This project [will be] capable of finding
+This project [will be] capable of finding
 bitcoin accounts associated with specific names or emails, and
 mapping transactions related to those accounts in a graphical confluence network.
 
