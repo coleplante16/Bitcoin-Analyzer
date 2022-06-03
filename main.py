@@ -25,18 +25,18 @@ def main():
         print('')
         
 #Enter path to sherlock.py here
-        script_descriptor = open('')
+        script_descriptor = open('sherlock/sherlock/sherlock.py')
         
         sherlock = script_descriptor.read()
         sys.argv = [sherlock, user]
         exec(sherlock)
         
     elif choice == 2:
-        import EmailSearch
+        from EmailSearch import acctEmail
         acctEmail()
 
     elif choice == 3:
-        import account
+        from account import account
         account()
 
     elif choice == 4:
@@ -45,7 +45,7 @@ def main():
     else:
         print('Sorry, you entered an invalid option.\n')
         prompt = input(colored('Would you like to try again? (Y/N): \n', 'blue'))
-        if prompt.upper() == 'Y' or 'YES':
+        if prompt.upper() == "Y" or prompt.upper() == "YES":
             main()
         else:
             quit()

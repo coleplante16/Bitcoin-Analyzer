@@ -60,9 +60,9 @@ def account():
     print('The most recent transaction was to:\n(if', address, 'sent currency, \"Amount\" shows as negative)\n', lastTrans)
 
     print(colored('\nWhat would you like to do next?', 'green'))
-    print('1. Search for this account online.')
-    print('2. Gather this account\'s transactions.')
-    print('3. Find a different account.')
+    print('1. Search for this account online')
+    print('2. Gather this account\'s transactions')
+    print('3. Find a different account')
     print('4. Main Menu')
     print('5. Quit')
     choice = input(colored('\nPlease enter your choice (1-5):\n', 'blue'))
@@ -77,7 +77,8 @@ def account():
         potentialLink = (re.findall(r'(https?://\S+)', acctInfo)) + (re.findall(r'(https?://\S+)', acctInfo))
         if not potentialLink:
             print('Sorry, we couldn\'t find the account mentioned anywhere...')
-            quit()
+            # quit()
+            account()
         potentialLinkstr = ''
         for i in potentialLink:
             potentialLinkstr += i
@@ -90,7 +91,7 @@ def account():
 
         # Export as CSV
         export = input(colored('\nWould you like this exported as a csv file? (Y/N):\n', 'blue'))
-        if export.upper() == 'Y' or 'YES':
+        if export.upper() == "Y" or export.upper == "YES":
             dict = {'Bitcoin address found on the following sites:': potentialLink}
             df = pandas.DataFrame(dict)
             df.to_csv(address + '.csv')
@@ -131,7 +132,8 @@ def account():
         account()
 
     elif choice == '4':
-       main()
+        from main import main
+        main()
 
     elif choice == '5':
         quit()

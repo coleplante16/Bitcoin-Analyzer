@@ -3,17 +3,17 @@ import pyyed
 
 def exportCSV(transactionsChart, address):
     export = input(colored('\nWould you like this exported as a csv file? (Y/N)\n', 'blue'))
-    if export == 'Y' or 'YES':
+    if export.upper == "Y" or export.upper == "YES":
         #path = input(colored('Please enter the path for which you would like the file saved:\n'))
         transactionsChart.to_csv(address + '.csv')
-
+        print('\nexported as ', address, '.csv')
     else:
         pass
 
 def export_yEd(address, var4):
     print('Now entering export_yEd')
     yEd = input(colored('\nWould you like a graphical display of these transactions? (Y/N) \n', 'blue'))
-    if yEd.upper() == 'Y' or yEd.upper() == 'YES':
+    if yEd.upper() == "Y" or yEd.upper() == "YES":
         linkChart = pyyed.Graph()
         linkChart.add_node(address, font_family='Dialog', font_size="20", height="100", width='100')
         for i in var4:
@@ -62,6 +62,7 @@ def export_yEd(address, var4):
 
 
         linkChart.write_graph(address, + '.graphml')
+
     else:
         print(colored('\nWhat would you like to do next?', 'green'))
         print('1. Search for this account online.')
@@ -69,7 +70,7 @@ def export_yEd(address, var4):
         print('3. Main Menu')
         print('4. Quit')
         choice = input(colored('\nPlease enter your choice (1-4):\n', 'blue'))
-        if choice == 1:
+        if choice == '1':
             print(address)
             URL = 'https://www.allprivatekeys.com/btc/' + address + '#pills-Forum'
             r = requests.get(URL)
@@ -91,7 +92,7 @@ def export_yEd(address, var4):
 
             # Export as CSV
             export = input(colored('\nWould you like this exported as a csv file? (Y/N):\n', 'blue'))
-            if export.upper() == 'Y' or 'YES':
+            if export.upper() == "Y" or export.upper() == "YES":
                 dict = {'Bitcoin address found on the following sites:': potentialLink}
                 df = pandas.DataFrame(dict)
                 df.to_csv(address + '.csv')
@@ -104,15 +105,15 @@ def export_yEd(address, var4):
             else:
                 quit()
 
-        elif choice == 2:
+        elif choice == '2':
             from account import account
             account()
 
-        elif choice == 3:
+        elif choice == '3':
             from main import main
             main()
 
-        elif choice == 4:
+        elif choice == '4':
             quit()
 
         else:

@@ -5,7 +5,7 @@ import re
 import pandas
 import pyyed
 import numpy
-import hibpwned
+#import hibpwned
 
 
 def acctEmail():
@@ -34,17 +34,19 @@ def acctEmail():
 
 
     leakedList =[]
-    leakedAcct = hibpwned.Pwned(email, 'bitcoinSearcher', '77d8edaa3f4547b8bd90a6ad85ae8ded')
-    leaked = leakedAcct.searchAllBreaches()
-    for i in leaked:
-        leakedList.append((i.get('Domain')))
+#    leakedAcct = hibpwned.Pwned(email, 'bitcoinSearcher', '77d8edaa3f4547b8bd90a6ad85ae8ded')
+#    leaked = leakedAcct.searchAllBreaches()
+#    for i in leaked:
+#        leakedList.append((i.get('Domain')))
 
 
     print('\nResults:\n \n', potentialAcct)
     print('\n This email was also found on data leaks associated with the following websites:', leakedList)
 
     export = input(colored('\nWould you like this exported as a csv file? (Y/N):\n', 'blue'))
-    if export.upper() == 'Y' or 'YES':
+
+    if export.upper == "Y" or export.upper == "YES":
+        print(export.upper())
         dict = {'Bitcoin address found on the following sites:': potentialAcct}
         df = pandas.DataFrame(dict)
         df.to_csv(email + '.csv')
@@ -55,14 +57,15 @@ def acctEmail():
         print(colored(
             '\nNOTICE:\nBe Sure to note the poster\'s account or username, \nthey may be the one who owns the bitcoin account.',
             'red'))
-    elif export.upper == 'N' or 'NO':
+
+    else:
         pass
 
     # Search Through Links for BTC Account
     search = input(colored('\nWould you like to scan these pages for potential Bitcoin accounts? (Y/N):\n', 'blue'))
     potentialBTC = []
     potentialBTCList = []
-    if search.upper() == 'Y' or 'YES':
+    if search.upper() == "Y" or search.upper() == "YES":
         print(colored('\nFetching your results...', 'yellow'))
         for i in potentialAcct:
             try:
@@ -85,7 +88,8 @@ def acctEmail():
             print('\nSorry, nothing matched the required parameters of a bitcoin address on these pages.')
         else:
             print('\n', potentialBTCList)
-    elif search.upper() == 'N' or 'NO':
+
+    else:
         quit()
 
     print((colored('\nWhat would you like to do next?\n', 'blue')))
@@ -94,13 +98,13 @@ def acctEmail():
     print(colored('3. Quit', 'blue'))
     next = input(colored('Please select an option.'))
     if next == '1':
-        import account
+        from account import account
         account()
     elif next == '2':
-        import main
+        from main import main
         main()
     elif next == '3':
         quit()
     else:
         print('Sorry, that wasn\'t a valid option, please try again')
-acctEmail()
+        acctEmail()

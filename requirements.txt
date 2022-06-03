@@ -1,9 +1,10 @@
 BeautifulSoup4
+bs4
 requests
 colored
 pandas
 numpy
 pyyed
 html5lib
-re
+re101
 
