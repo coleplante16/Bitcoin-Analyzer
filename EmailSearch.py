@@ -41,7 +41,7 @@ def acctEmail():
 
 
     print('\nResults:\n \n', potentialAcct)
-    print('\n This email was also found on data leaks associated with the following websites:', leakedList)
+#    print('\n This email was also found on data leaks associated with the following websites:', leakedList)
 
     export = input(colored('\nWould you like this exported as a csv file? (Y/N):\n', 'blue'))
 
