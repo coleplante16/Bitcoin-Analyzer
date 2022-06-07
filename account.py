@@ -30,35 +30,18 @@ def account():
     #        print('Sorry, Bitcoin addresses cannot contain the letters O, I, or l')
     #    else:
     #        pass
+
+    end = input(
+        colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
+
     print(colored('\nFetching your results. Please wait...\n', 'yellow'))
 
-    # Search for transactions
+    from addressdata import accountdata
+    r = accountdata(address, end)
+    accountmenu(address, r)
 
-    # Grab Account Information
-    URL = 'https://www.blockchain.com/btc/address/' + address
-    r = requests.get(URL)
-    soup = BeautifulSoup(r.content, 'html5lib')
-    acctInfo = str(soup.find('span', attrs={'class': 'sc-1ryi78w-0 cILyoi sc-16b9dsl-1 ZwupP u3ufsr-0 eQTRKC'}))
-
-    # Clean Up Account Information
-    acctInfo = re.sub('<.+?>', '', acctInfo)
-    acct = [float(acct) for acct in str.split(acctInfo) if acct.isdigit()]
-    print(acctInfo)
-    print('\n')
-
-    # Grab Most Recent Transaction
-    lastTrans = str(soup.find('div', attrs={'class': 'sc-19pxzmk-0 dVzTcW'}))
-
-    # Clean up Most Recent Transaction
-    lastTrans = re.sub('<.+?>', ' ', lastTrans)
-    lastTrans = ' '.join(lastTrans.split())
-    lastTrans = list(lastTrans.split(' '))
-
-    # Present Most Recent Transaction as a Table
-    column_names = ['To', 'Amount', 'Currency']
-    lastTrans = pandas.DataFrame(lastTrans, column_names)
-    print('The most recent transaction was to:\n(if', address, 'sent currency, \"Amount\" shows as negative)\n', lastTrans)
-
+# Prompt user for what they would like to do next
+def accountmenu(address, r):
     print(colored('\nWhat would you like to do next?', 'green'))
     print('1. Search for this account online')
     print('2. Gather this account\'s transactions')
@@ -106,27 +89,14 @@ def account():
 
 
     elif choice == '2':
-        end = input(
-            colored('\nPlease type in the maximum number of transactions you would like (multiples of 5).\n', 'blue'))
-        end = (int(end) / 5)
 
         print(colored('\nFetching your results. Please wait...', 'yellow'))
-        pages = numpy.arange(1, end, 1)
-        transactions3 = []
-        transactions = []
+        from addressdata import accounttransactions
+        accounttransactions(r)
+        accountmenu(address, r)
 
-        for page in pages:
-            URL1 = 'https://www.blockchain.com/btc/address/' + address + '?page=' + str(page)
-            r1 = requests.get(URL1)
-            soup1 = BeautifulSoup(r1.content, 'html5lib')
-            transactions1 = str(soup1.findAll('div', attrs={'class': 'sc-1fp9csv-0 koYsLf'}))
-
-            transactions2 = (transactions1.split('<div class ="sc-1fp9csv-0 koYsLf"'))
-            transactions3.append(transactions2)
-            print('\n', round(5 * page, 1), 'transactions gathered')
-
-        from Wrangled import Wrangled
-        Wrangled(transactions3, transactions, address)
+       # from Wrangled import Wrangled
+       # Wrangled(transactions3, transactions, address)
 
     elif choice == '3':
         account()
@@ -140,7 +110,6 @@ def account():
 
     else:
      print('\n \nSorry, that wasn\'t a choice. Please try again')
-
 
 
 account()

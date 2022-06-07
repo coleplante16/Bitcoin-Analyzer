@@ -1,11 +1,11 @@
 import requests
 import json
+import datetime
 
-def accountdata():
-    # address = input('\nWhat is the address you would like to analyze? \n')
-    address = '1NEh2qQaKkxb8DWuPTuFLsxF2gxWeNrvAH'  # hard coded for convenience in early testing
-    transactions = input('\nPlease type in the maximum number of transactions you would like to load.\n')
 
+# retrieve data on a given address
+# returns dict of retrieved data
+def accountdata(address, transactions):
     URL = 'https://blockchain.info/rawaddr/' + address + "?limit=" + transactions
     # grabs json from url and build dictionary
     r = requests.get(URL).json()
@@ -23,6 +23,11 @@ def accountdata():
     print('Current Balance: ', balance)
     print('Total Transactions: ', totaltransactions)
 
+    return r
+
+
+# Print out transaction data
+def accounttransactions(r):
 
     # rough outline of how transactions are formatted
     # ignores unimportant data
@@ -30,10 +35,12 @@ def accountdata():
     #       {
     #       "fee":
     #       "hash":
-    #       "inputs":[
+    #       "inputs":
+    #               [
     #               {
     #               "index":
-    #               "prev_out": {
+    #               "prev_out":
+    #                   {
     #                   "addr": (address)
     #                   "spent":
     #                   "value": (in satoshis)
@@ -62,53 +69,50 @@ def accountdata():
     #      ]
     #
 
-    # Print out transaction data
-    transaction = input('\nWould you like to print out transaction data? (Y/N):\n')
-    if transaction.upper() == "Y" or transaction.upper() == "YES":
+    # Make list of transactions
+    transaction_list = r['txs']
+    print(type(transaction_list))
 
-        # Make list of transactions
-        transaction_list = r['txs']
-        print(type(transaction_list))
+    i = 0  # keep track of transaction number
 
-        i=0 # keep track of transaction number
+    # Read data from each transaction
+    for transaction_data in transaction_list:
 
-        # Read data from each transaction
-        for transaction_data in transaction_list:
+        i += 1
+        print("\n\nTransaction: ", i)
+        print("Transaction Hash ID:", transaction_data['hash'])
+        print("Time of Transaction: ", datetime.datetime.fromtimestamp(transaction_data['time']))
+        print("Amount traded by this address: ", (transaction_data['result'])/100000000)
 
-            i += 1
-            print("\n\nTransaction: ", i)
-            print("Transaction Hash ID:", transaction_data['hash'])
+        print("\nINPUTS: ")
+        # Make list of inputs
+        input_list = transaction_data['inputs']
 
-            print("\nINPUTS: ")
-            # Make list of inputs
-            input_list = transaction_data['inputs']
+        # Print out data from each input
+        for input_data in input_list:
+            print("\nInput: ", (input_data['index'] + 1))
+            input_data_list = input_data['prev_out']
+            print('Address: ', input_data_list['addr'])
+            print('Value: ', (input_data_list['value'])/100000000)
+            print('Spent: ', input_data_list['spent'])
 
-            # Print out data from each input
-            for input_data in input_list:
-                print("\nInput: ", (input_data['index'] + 1))
-                input_data_list = input_data['prev_out']
-                print('Address: ', input_data_list['addr'])
-                print('Value: ', (input_data_list['value'])/100000000)
-                print('Spent: ', input_data_list['spent'])
+        print("\nOUTPUTS: ")
+        # make list of outputs
+        output_list = transaction_data['out']
+        j = 0
 
-            print("\nOUTPUTS: ")
-            # make list of outputs
-            output_list = transaction_data['out']
-            j = 0
+        # Print out data from each output
+        for output_data in output_list:
+            j += 1
+            print("\nOutput: ", j)
+            print('Address: ', output_data['addr'])
+            print('Value: ', (output_data['value'])/100000000)
+            print('Spent: ', output_data['spent'])
 
-            # Print out data from each output
-            for output_data in output_list:
-                j += 1
-                print("\nOutput: ", j)
-                print('Address: ', output_data['addr'])
-                print('Value: ', (output_data['value'])/100000000)
-                print('Spent: ', output_data['spent'])
+        return
 
 
-    # prompt to print raw data
-    raw = input('\nWould you like to print raw data? (Y/N):\n')
-    if raw.upper() == "Y" or raw.upper() == "YES":
-        data = json.dumps(r, sort_keys=True, indent=4)
-        print('\n\n' + data)
-
-accountdata()
+# dump all recorded data
+def datadump(r):
+    data = json.dumps(r, sort_keys=True, indent=4)
+    print('\n\n' + data)
