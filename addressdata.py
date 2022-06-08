@@ -5,11 +5,7 @@ import datetime
 
 # retrieve data on a given address
 # returns dict of retrieved data
-def accountdata(address, transactions):
-    URL = 'https://blockchain.info/rawaddr/' + address + "?limit=" + transactions
-    # grabs json from url and build dictionary
-    r = requests.get(URL).json()
-
+def printaccountdata(address, r):
     # record basic info on address
     received = (r.get('total_received'))/100000000
     sent = (r.get('total_sent'))/100000000
@@ -18,9 +14,9 @@ def accountdata(address, transactions):
 
     # print out info
     print('Address: ' + address)
-    print('Total Received: ', received)
-    print('Total Sent: ', sent)
-    print('Current Balance: ', balance)
+    print('Total Received: %.8f' % received)
+    print('Total Sent: %.8f' % sent)
+    print('Current Balance: %.8f' % balance)
     print('Total Transactions: ', totaltransactions)
 
     return r
@@ -82,7 +78,7 @@ def accounttransactions(r):
         print("\n\nTransaction: ", i)
         print("Transaction Hash ID:", transaction_data['hash'])
         print("Time of Transaction: ", datetime.datetime.fromtimestamp(transaction_data['time']))
-        print("Amount traded by this address: ", (transaction_data['result'])/100000000)
+        print("Amount traded by this address: %.8f" % float((transaction_data['result'])/100000000))
 
         print("\nINPUTS: ")
         # Make list of inputs
@@ -93,7 +89,7 @@ def accounttransactions(r):
             print("\nInput: ", (input_data['index'] + 1))
             input_data_list = input_data['prev_out']
             print('Address: ', input_data_list['addr'])
-            print('Value: ', (input_data_list['value'])/100000000)
+            print('Value: %.8f' % float(input_data_list['value']/100000000))
             print('Spent: ', input_data_list['spent'])
 
         print("\nOUTPUTS: ")
@@ -106,7 +102,7 @@ def accounttransactions(r):
             j += 1
             print("\nOutput: ", j)
             print('Address: ', output_data['addr'])
-            print('Value: ', (output_data['value'])/100000000)
+            print('Value: %.8f' % float(output_data['value']/100000000))
             print('Spent: ', output_data['spent'])
 
         return
@@ -116,3 +112,19 @@ def accounttransactions(r):
 def datadump(r):
     data = json.dumps(r, sort_keys=True, indent=4)
     print('\n\n' + data)
+
+
+# grabs json from url and build dictionary
+# with no transactions
+def getdata(address):
+    URL = 'https://blockchain.info/rawaddr/' + address + "?limit=0"
+    r = requests.get(URL).json()
+    return r
+
+
+# grabs json from url and build dictionary
+# with specified number of transactions
+def gettransactions(address, transactions):
+    URL = 'https://blockchain.info/rawaddr/' + address + "?limit=" + transactions
+    r = requests.get(URL).json()
+    return r

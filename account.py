@@ -11,7 +11,6 @@ import numpy
 
 def account():
 
-
     address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
     if len(address) < 26:
         print('\n Sorry, that wasn\'t quite long enough.')
@@ -31,17 +30,19 @@ def account():
     #    else:
     #        pass
 
-    end = input(
-        colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
-
     print(colored('\nFetching your results. Please wait...\n', 'yellow'))
+    from addressdata import getdata
+    r = getdata(address)
 
-    from addressdata import accountdata
-    r = accountdata(address, end)
+    from addressdata import printaccountdata
+    printaccountdata(address, r)
+
     accountmenu(address, r)
+
 
 # Prompt user for what they would like to do next
 def accountmenu(address, r):
+
     print(colored('\nWhat would you like to do next?', 'green'))
     print('1. Search for this account online')
     print('2. Gather this account\'s transactions')
@@ -49,7 +50,6 @@ def accountmenu(address, r):
     print('4. Main Menu')
     print('5. Quit')
     choice = input(colored('\nPlease enter your choice (1-5):\n', 'blue'))
-
 
     if choice == '1':
         print(address)
@@ -87,16 +87,19 @@ def accountmenu(address, r):
         else:
             quit()
 
-
     elif choice == '2':
 
         print(colored('\nFetching your results. Please wait...', 'yellow'))
+        end = input(
+             colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
+        from addressdata import gettransactions
+        r = gettransactions(address, end)
         from addressdata import accounttransactions
         accounttransactions(r)
         accountmenu(address, r)
 
-       # from Wrangled import Wrangled
-       # Wrangled(transactions3, transactions, address)
+        # from Wrangled import Wrangled
+        # Wrangled(transactions3, transactions, address)
 
     elif choice == '3':
         account()
