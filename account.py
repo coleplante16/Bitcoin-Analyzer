@@ -89,9 +89,10 @@ def accountmenu(address):
 
     elif choice == '2':
 
-        print(colored('\nFetching your results. Please wait...', 'yellow'))
         end = input(
              colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
+
+        print(colored('\nFetching your results. Please wait...', 'yellow'))
         from addressdata import gettransactions
         r = gettransactions(address, end)
 
@@ -114,7 +115,8 @@ def accountmenu(address):
         quit()
 
     else:
-     print('\n \nSorry, that wasn\'t a choice. Please try again')
+        print('\n \nSorry, that wasn\'t a choice. Please try again')
+        accountmenu(address)
 
 
 account()

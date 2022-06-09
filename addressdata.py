@@ -65,10 +65,21 @@ def accounttransactions(r, txs, addr):
     #       }
     #      ]
     #
-
+    printall = input(colored('\nPrint data for each transaction? (Y/N):\n', 'blue'))
+    if printall.upper() == "Y" or printall.upper() == "YES":
+        printbasic = True
+        printio = input(colored('\nPrint inputs and outputs of each transaction? (Y/N):\n', 'blue'))
+        if printio.upper() == "Y" or printio.upper() == "YES":
+            printtf = True
+        else:
+            printtf = False
+    else:
+        printbasic = False
+        printtf = False
     # Make list of transactions
     transaction_list = r['txs']
-
+    keyerror = False
+    error_list = []
     i = 0  # keep track of transaction number
     dataframe_list = [] # list of transaction dataframes
     blank = pd.DataFrame({'A': [' '], 'B': [' '], 'C': [' '], 'D': [' ']})  # blank line for spaces data frames
@@ -95,13 +106,15 @@ def accounttransactions(r, txs, addr):
         # Add space to data frame before inputs
         dataframe_list[i] = pd.concat((dataframe_list[i], blank), ignore_index=True)
 
-        # Print basic data
-        print("\n\nTransaction: ", (i + 1))
-        print("Transaction Hash ID:", hashid)
-        print("Time of Transaction: ", tx_time)
-        print("Amount traded by this address: %.8f" % float(result))
+        if printbasic:
+            # Print basic data
+            print("\n\nTransaction: ", (i + 1))
+            print("Transaction Hash ID:", hashid)
+            print("Time of Transaction: ", tx_time)
+            print("Amount traded by this address: %.8f" % float(result))
 
-        print("\nINPUTS: ")
+        if printtf:
+            print("\nINPUTS: ")
         # Make list of inputs
         input_list = transaction_data['inputs']
 
@@ -122,18 +135,21 @@ def accounttransactions(r, txs, addr):
             index = pd.DataFrame({'A': [input_index], 'B': [input_address], 'C': [input_value], 'D': [input_spent]})
             dataframe_list[i] = pd.concat((dataframe_list[i], index), ignore_index=True)
 
-            # Print input data to dataframe
-            print("\nInput: ", input_index)
-            print('Address: ', input_address)
-            print('Value: %.8f' % float(input_value))
-            print('Spent: ', input_spent)
+            if printtf:
+                # Print input data to dataframe
+                print("\nInput: ", input_index)
+                print('Address: ', input_address)
+                print('Value: %.8f' % float(input_value))
+                print('Spent: ', input_spent)
 
         # add output header to dataframe
         dataframe_list[i] = pd.concat((dataframe_list[i], blank), ignore_index=True)
         index = pd.DataFrame({'A': ['Output:'], 'B': ['Address:'], 'C': ['Value:'], 'D': ['Spent:']})
         dataframe_list[i] = pd.concat((dataframe_list[i], index), ignore_index=True)
 
-        print("\nOUTPUTS: ")
+        if printtf:
+            print("\nOUTPUTS: ")
+
         # make list of outputs
         output_list = transaction_data['out']
         output_index = 0
@@ -143,7 +159,13 @@ def accounttransactions(r, txs, addr):
             output_index += 1
 
             # Collect output data
-            output_address = output_data['addr']
+            try:
+                output_address = output_data['addr']
+            except KeyError:
+                output_address = 'error'
+                keyerror = True
+                error_list.append('Transaction: {} Output: {}'.format((i + 1), output_index))
+
             output_value = output_data['value'] / 100000000
             output_spent = output_data['spent']
 
@@ -151,13 +173,18 @@ def accounttransactions(r, txs, addr):
             index = pd.DataFrame({'A': [output_index], 'B': [output_address], 'C': [output_value], 'D': [output_spent]})
             dataframe_list[i] = pd.concat((dataframe_list[i], index), ignore_index=True)
 
-            # Print output data
-            print("\nOutput: ", output_index)
-            print('Address: ', output_address)
-            print('Value: %.8f' % float(output_value))
-            print('Spent: ', output_spent)
+            if printtf:
+                # Print output data
+                print("\nOutput: ", output_index)
+                print('Address: ', output_address)
+                print('Value: %.8f' % float(output_value))
+                print('Spent: ', output_spent)
 
         i += 1
+
+    if keyerror:
+        print('\nError occurred, could not find address for: ')
+        print(error_list)
 
     # Prompt user to export transactions
     export = input(colored('\nWould you like this exported as an excel file? (Y/N):\n', 'blue'))
@@ -201,3 +228,11 @@ def gettransactions(address, transactions):
     URL = 'https://blockchain.info/rawaddr/' + address + "?limit=" + transactions
     r = requests.get(URL).json()
     return r
+
+
+# dump all data for a single transaction
+def transactiondump():
+    hashid = input(colored('\nWhat is the tx hash id you would like to analyze? \n', 'blue'))
+    URL = 'https://blockchain.info/rawtx/'+ hashid
+    r = requests.get(URL).json()
+    datadump(r)
