@@ -37,11 +37,11 @@ def account():
     from addressdata import printaccountdata
     printaccountdata(address, r)
 
-    accountmenu(address, r)
+    accountmenu(address)
 
 
 # Prompt user for what they would like to do next
-def accountmenu(address, r):
+def accountmenu(address):
 
     print(colored('\nWhat would you like to do next?', 'green'))
     print('1. Search for this account online')
@@ -94,9 +94,11 @@ def accountmenu(address, r):
              colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
         from addressdata import gettransactions
         r = gettransactions(address, end)
+
         from addressdata import accounttransactions
-        accounttransactions(r)
-        accountmenu(address, r)
+        accounttransactions(r, end, address)
+
+        accountmenu(address)
 
         # from Wrangled import Wrangled
         # Wrangled(transactions3, transactions, address)

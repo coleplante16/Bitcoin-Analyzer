@@ -7,4 +7,5 @@ numpy
 pyyed
 html5lib
 re101
+openpyxl
 
