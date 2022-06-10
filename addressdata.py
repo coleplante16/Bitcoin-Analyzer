@@ -5,8 +5,8 @@ import pandas as pd
 from termcolor import colored
 
 
-# retrieve data on a given address
-# returns dict of retrieved data
+# accepts address and dict of data
+# record and print basic info
 def printaccountdata(address, r):
     # record basic info on address
     received = (r.get('total_received')) / 100000000
@@ -77,6 +77,7 @@ def accounttransactions(r, txs, addr):
         printbasic = False
         printtf = False
     # Make list of transactions
+    addr_list = []
     transaction_list = r['txs']
     keyerror = False
     error_list = []
@@ -131,6 +132,9 @@ def accounttransactions(r, txs, addr):
             input_value = (input_data_list['value']) / 100000000
             input_spent = input_data_list['spent']
 
+            if input_address != addr:
+                addr_list.append(input_address)
+
             # Add input data to dataframe
             index = pd.DataFrame({'A': [input_index], 'B': [input_address], 'C': [input_value], 'D': [input_spent]})
             dataframe_list[i] = pd.concat((dataframe_list[i], index), ignore_index=True)
@@ -164,10 +168,15 @@ def accounttransactions(r, txs, addr):
             except KeyError:
                 output_address = 'error'
                 keyerror = True
-                error_list.append('Transaction: {} Output: {}'.format((i + 1), output_index))
+                error_list.append('Transaction: {} Output: {}'.format(i, output_index))
 
             output_value = output_data['value'] / 100000000
             output_spent = output_data['spent']
+
+            if keyerror:    # do not include "error"
+                pass
+            elif output_address != addr:
+                addr_list.append(output_address)
 
             # Add output data tp dataframe
             index = pd.DataFrame({'A': [output_index], 'B': [output_address], 'C': [output_value], 'D': [output_spent]})
@@ -186,8 +195,11 @@ def accounttransactions(r, txs, addr):
         print('\nError occurred, could not find address for: ')
         print(error_list)
 
+    linkedaddrs = addrcount(addr_list)
+    print('\n', (len(linkedaddrs.index)), ' Potentially linked addresses found.')
+
     # Prompt user to export transactions
-    export = input(colored('\nWould you like this exported as an excel file? (Y/N):\n', 'blue'))
+    export = input(colored('\nWould you like the transaction data exported as an excel file? (Y/N):\n', 'blue'))
 
     if export.upper() == "Y" or export.upper() == "YES":
         i = 0
@@ -195,7 +207,7 @@ def accounttransactions(r, txs, addr):
         # Create Excel writer object
         with pd.ExcelWriter(addr + ".xlsx") as writer:
             i = 0
-
+            linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
             # Add each transaction dataframe as a sheet
             for tx in dataframe_list:
                 i += 1
@@ -236,3 +248,15 @@ def transactiondump():
     URL = 'https://blockchain.info/rawtx/'+ hashid
     r = requests.get(URL).json()
     datadump(r)
+
+
+# accepts list of addresses
+# returns dataframe with times each address appears
+def addrcount(addrs):
+    count = {}
+    for i in addrs:
+        if addrs.count(i) > 1:
+            count[i] = addrs.count(i)
+    table = pd.DataFrame.from_dict(count, orient='index', columns=['Count'])
+    table.sort_values(by=['Count'], ascending=False, inplace=True)
+    return table
