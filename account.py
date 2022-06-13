@@ -84,8 +84,8 @@ def accountmenu(address):
             print(colored(
                 '\nBe Sure to note the poster\'s account or username, \nthey may be the one who owns the bitcoin account',
                 'red'))
-        else:
-            quit()
+
+        accountmenu(address)
 
     elif choice == '2':
 

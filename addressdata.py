@@ -3,6 +3,7 @@ import json
 import datetime
 import pandas as pd
 from termcolor import colored
+from FindPrice import btctousd
 
 
 # accepts address and dict of data
@@ -16,9 +17,9 @@ def printaccountdata(address, r):
 
     # print out info
     print('Address: ' + address)
-    print('Total Received: %.8f' % received)
-    print('Total Sent: %.8f' % sent)
-    print('Current Balance: %.8f' % balance)
+    print('Total Received: {:.8f} BTC ${:,.2f} USD'.format(received, btctousd(received)))
+    print('Total Sent: {:.8f} BTC ${:,.2f} USD'.format(sent, btctousd(sent)))
+    print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, btctousd(balance)))
     print('Total Transactions: ', totaltransactions)
 
     return r
@@ -82,7 +83,7 @@ def accounttransactions(r, txs, addr):
     keyerror = False
     error_list = []
     i = 0  # keep track of transaction number
-    dataframe_list = [] # list of transaction dataframes
+    dataframe_list = []  # list of transaction dataframes
     blank = pd.DataFrame({'A': [' '], 'B': [' '], 'C': [' '], 'D': [' ']})  # blank line for spaces data frames
 
     # Read data from each transaction
@@ -112,7 +113,7 @@ def accounttransactions(r, txs, addr):
             print("\n\nTransaction: ", (i + 1))
             print("Transaction Hash ID:", hashid)
             print("Time of Transaction: ", tx_time)
-            print("Amount traded by this address: %.8f" % float(result))
+            print("Amount traded by this address: {:.8f} BTC ${:,.2f} USD".format(result, btctousd(result)))
 
         if printtf:
             print("\nINPUTS: ")
@@ -143,7 +144,7 @@ def accounttransactions(r, txs, addr):
                 # Print input data to dataframe
                 print("\nInput: ", input_index)
                 print('Address: ', input_address)
-                print('Value: %.8f' % float(input_value))
+                print('Value: {:.8f} BTC ${:,.2f} USD'.format(input_value, btctousd(input_value)))
                 print('Spent: ', input_spent)
 
         # add output header to dataframe
@@ -186,7 +187,7 @@ def accounttransactions(r, txs, addr):
                 # Print output data
                 print("\nOutput: ", output_index)
                 print('Address: ', output_address)
-                print('Value: %.8f' % float(output_value))
+                print('Value: {:.8f} BTC ${:,.2f} USD'.format(output_value, btctousd(output_value)))
                 print('Spent: ', output_spent)
 
         i += 1
@@ -196,7 +197,7 @@ def accounttransactions(r, txs, addr):
         print(error_list)
 
     linkedaddrs = addrcount(addr_list)
-    print('\n', (len(linkedaddrs.index)), ' Potentially linked addresses found.')
+    print('\n', (len(linkedaddrs.index)), 'Potentially linked addresses found.')
 
     # Prompt user to export transactions
     export = input(colored('\nWould you like the transaction data exported as an excel file? (Y/N):\n', 'blue'))
