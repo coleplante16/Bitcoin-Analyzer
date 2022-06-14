@@ -14,6 +14,7 @@ def printaccountdata(address, r):
     sent = (r.get('total_sent')) / 100000000
     balance = (r.get('final_balance')) / 100000000
     totaltransactions = r.get('n_tx')
+    sanctioned = ofaccheck(address)
 
     # print out info
     print('Address: ' + address)
@@ -21,6 +22,9 @@ def printaccountdata(address, r):
     print('Total Sent: {:.8f} BTC ${:,.2f} USD'.format(sent, btctousd(sent)))
     print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, btctousd(balance)))
     print('Total Transactions: ', totaltransactions)
+
+    if sanctioned[0]:
+        print('!This address was found on a list of OFAC sanctioned addresses!')
 
     return r
 
@@ -261,3 +265,28 @@ def addrcount(addrs):
     table = pd.DataFrame.from_dict(count, orient='index', columns=['Count'])
     table.sort_values(by=['Count'], ascending=False, inplace=True)
     return table
+
+
+# uses cryptofac api to test if an address has been sanctioned
+# could be expanded to check up to 25 addresses at once
+#
+# accepts
+#   a crypto address
+#       accepted currencies
+#           (BTC, ETH, LTC, ZEC, BSV, DASH, BCH, XMR, BTG, ETC, XVG, USDT, XRP)
+# returns
+#   T/F of if address has been sanctioned
+#   Associated Entity of the sanction
+def ofaccheck(addr):
+    URL = 'https://cryptofac.org/api/?q=' + addr
+    r = (requests.get(URL)).json()
+
+    if r[0]['match']:
+        out = [r[0]['match'], r[0]['entity']]
+    else:
+        out = [r[0]['match']]
+    return out
+# Test Addresses
+# 17a5bpKvEp1j1Trs4qTbcNZrby53JbaS9C
+# 1PJp8diNa89cVHpiT1VPu7EQ8LxYM5HX6v
+
