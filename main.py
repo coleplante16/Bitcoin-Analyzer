@@ -10,6 +10,16 @@ import sys
 from os.path import dirname
 
 
+def getsdn():
+    from OfacXML import xmlpull
+    from OfacXML import xmlparse
+    import os.path
+    if not os.path.exists('sdn.xml'):
+        xmlpull()
+    if not os.path.exists('output.xml'):
+        xmlparse()
+
+
 # Main Menu
 def main():
     print(colored('\nPlease select an option from the list below:', 'green'))
@@ -17,6 +27,8 @@ def main():
     print(colored('2. Find an account based on a person\'s email', 'yellow'))
     print(colored('3. Analyze an account you already know', 'yellow'))
     print('4. Quit\n')
+
+    getsdn()
 
     choice = int(input((colored('Enter your choice: \n', 'blue'))))
 

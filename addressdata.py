@@ -14,7 +14,10 @@ def printaccountdata(address, r):
     sent = (r.get('total_sent')) / 100000000
     balance = (r.get('final_balance')) / 100000000
     totaltransactions = r.get('n_tx')
-    sanctioned = ofaccheck(address)
+    # sanctioned = ofaccheck(address)
+
+    from OfacXML import xmlsearch
+    sanctioned = xmlsearch(address)
 
     # print out info
     print('Address: ' + address)
@@ -23,8 +26,11 @@ def printaccountdata(address, r):
     print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, btctousd(balance)))
     print('Total Transactions: ', totaltransactions)
 
-    if sanctioned[0]:
+    if not sanctioned.empty():
         print('!This address was found on a list of OFAC sanctioned addresses!')
+        printinfo = input(colored('\nPrint data for each transaction? (Y/N):\n', 'blue'))
+        if printinfo.upper() == "Y" or printinfo.upper() == "YES":
+            print(sanctioned)
 
     return r
 
@@ -269,6 +275,7 @@ def addrcount(addrs):
 
 # uses cryptofac api to test if an address has been sanctioned
 # could be expanded to check up to 25 addresses at once
+# NOT ACCURATE AND MISSES SOME ADDRESSES
 #
 # accepts
 #   a crypto address
