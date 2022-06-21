@@ -16,6 +16,7 @@ def printaccountdata(address, r):
     totaltransactions = r.get('n_tx')
     # sanctioned = ofaccheck(address)
 
+    # check for sanctions
     from OfacXML import xmlsearch
     sanctioned = xmlsearch(address)
 
@@ -26,9 +27,10 @@ def printaccountdata(address, r):
     print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, btctousd(balance)))
     print('Total Transactions: ', totaltransactions)
 
-    if not sanctioned.empty():
+    # print that sanction was found
+    if not sanctioned.empty:
         print('!This address was found on a list of OFAC sanctioned addresses!')
-        printinfo = input(colored('\nPrint data for each transaction? (Y/N):\n', 'blue'))
+        printinfo = input(colored('\nPrint sanction info? (Y/N):\n', 'blue'))
         if printinfo.upper() == "Y" or printinfo.upper() == "YES":
             print(sanctioned)
 
@@ -206,6 +208,7 @@ def accounttransactions(r, txs, addr):
         print('\nError occurred, could not find address for: ')
         print(error_list)
 
+    # make dataframe of linked addresses
     linkedaddrs = addrcount(addr_list)
     print('\n', (len(linkedaddrs.index)), 'Potentially linked addresses found.')
 
@@ -219,6 +222,12 @@ def accounttransactions(r, txs, addr):
         with pd.ExcelWriter(addr + ".xlsx") as writer:
             i = 0
             linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
+
+            from OfacXML import xmlsearch
+            sanctioned = xmlsearch(addr)
+            if not sanctioned.empty:
+                sanctioned.to_excel(writer, sheet_name='Sanction Data', index=True)
+
             # Add each transaction dataframe as a sheet
             for tx in dataframe_list:
                 i += 1

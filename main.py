@@ -10,13 +10,17 @@ import sys
 from os.path import dirname
 
 
+# download and parse sdn list if not already done
+# may want to check if it is up-to-date
 def getsdn():
     from OfacXML import xmlpull
     from OfacXML import xmlparse
     import os.path
-    if not os.path.exists('sdn.xml'):
-        xmlpull()
+
     if not os.path.exists('output.xml'):
+        if not os.path.exists('sdn.xml'):
+            print('***loading sanction list please wait***')
+            xmlpull()
         xmlparse()
 
 
