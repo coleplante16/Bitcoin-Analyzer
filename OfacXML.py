@@ -109,17 +109,16 @@ def addresssort(sanctiondf):
     addresses = np.where(sanctiondf['Tag'].str.contains('Digital Currency Address*'))
     addressdf = sanctiondf.iloc[addresses]
     addressdf.sort_index(inplace=True, ignore_index=True)
-    print(addressdf)
+    # print(addressdf)
+    return addressdf
+
 
 # accepts
 #   sanction info dataframe
 # returns
 #   dataframe of just Bitcoin addresses
 def addressBTC(sanctiondf):
-    addresses = np.where(sanctiondf['Tag'].str.contains('*XBT'))
-    addressdf = sanctiondf.iloc[addresses]
-    addressdf.sort_index(inplace=True, ignore_index=True)
-    print(addressdf)
+    return addressType(sanctiondf, 'XBT')
 
 
 # accepts
@@ -131,14 +130,20 @@ def addressType(sanctiondf, currency):
     addresses = np.where(sanctiondf['Tag'].str.contains('*{}'.format(currency)))
     addressdf = sanctiondf.iloc[addresses]
     addressdf.sort_index(inplace=True, ignore_index=True)
-    print(addressdf)
+    # print(addressdf)
+    return addressdf
 
 
-def acceptedCurrencies():
+def acceptedCurrencies(cryptoid):
+    v = True
     currencies = pd.DataFrame({
         'Currency': ['Bitcoin', 'Ethereum', 'Litecoin', 'Neo', 'Dash', 'Ripple', 'Iota', 'Monero', 'Petro'],
-        'ID': ['XBT', 'ETH', 'LTC', 'NEO', 'DASH', 'XRP','Iota (MIOTA), Monero (XMR), and Petro (PTR)']})
-    print(currencies)
+        'ID': ['XBT', 'ETH', 'LTC', 'NEO', 'DASH', 'XRP', 'MIOTA', 'XMR', 'PTR']})
 
-df = xmlsearch('1PJp8diNa89cVHpiT1VPu7EQ8LxYM5HX6v')
-addresssort(df)
+    if (currencies['ID'].str.contains(cryptoid)).any():
+        return True
+    else:
+        if v:
+            print('ID not found, acceepted IDs:')
+            print(currencies)
+        return False
