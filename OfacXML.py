@@ -29,7 +29,7 @@ def xmlsearch(addr):
     tree = et.parse('output.xml')
     root = tree.getroot()
     xmlns = "http://tempuri.org/sdnList.xsd"
-
+    found = False
     for entry in root:
         addressfound = False
         for k in entry:
@@ -46,9 +46,9 @@ def xmlsearch(addr):
                         if child[2].text == addr:
                             print('found')
                             foundentry = entry
+                            found = True
 
-    if foundentry is not None:
-        # output = pd.DataFrame([['Tag:', 'Text:']],columns=list('AB'), index=['1'])
+    if found:
         output = pd.DataFrame(columns=['Tag', 'Text'])
         for k in foundentry:
             if k.tag == '{%s}firstName' % xmlns:
