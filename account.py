@@ -7,41 +7,8 @@ import pyyed
 import numpy
 
 
-
-
-def account():
-
-    address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
-    if len(address) < 26:
-        print('\n Sorry, that wasn\'t quite long enough.')
-    else:
-        pass
-    # if len(address) > 34:
-    #    print('\n Sorry, that was too many characters')
-    # else:
-    #    pass
-    if address[0] == 1 or 3:
-        pass
-    else:
-        print('/n Sorry, Bitcoin addresses start with either a 1 or a 3.')
-    # for i in address:
-    #    if i in ['O', 'I', 'l']:
-    #        print('Sorry, Bitcoin addresses cannot contain the letters O, I, or l')
-    #    else:
-    #        pass
-
-    print(colored('\nFetching your results. Please wait...\n', 'yellow'))
-    from addressdata import getdata
-    r = getdata(address)
-
-    from addressdata import printaccountdata
-    printaccountdata(address, r)
-
-    accountmenu(address)
-
-
 # Prompt user for what they would like to do next
-def accountmenu(address):
+def accountmenu(address, coin):
 
     print(colored('\nWhat would you like to do next?', 'green'))
     print('1. Search for this account online')
@@ -61,7 +28,7 @@ def accountmenu(address):
         if not potentialLink:
             print('Sorry, we couldn\'t find the account mentioned anywhere...')
             # quit()
-            account()
+            choosecurrency()
         potentialLinkstr = ''
         for i in potentialLink:
             potentialLinkstr += i
@@ -85,7 +52,7 @@ def accountmenu(address):
                 '\nBe Sure to note the poster\'s account or username, \nthey may be the one who owns the bitcoin account',
                 'red'))
 
-        accountmenu(address)
+        accountmenu(address, coin)
 
     elif choice == '2':
 
@@ -93,19 +60,15 @@ def accountmenu(address):
              colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
 
         print(colored('\nFetching your results. Please wait...', 'yellow'))
-        from addressdata import gettransactions
-        r = gettransactions(address, end)
+        currencyTX(address, end, coin)
 
-        from addressdata import accounttransactions
-        accounttransactions(r, end, address)
-
-        accountmenu(address)
+        accountmenu(address, coin)
 
         # from Wrangled import Wrangled
         # Wrangled(transactions3, transactions, address)
 
     elif choice == '3':
-        account()
+        choosecurrency()
 
     elif choice == '4':
         from main import main
@@ -116,7 +79,86 @@ def accountmenu(address):
 
     else:
         print('\n \nSorry, that wasn\'t a choice. Please try again')
-        accountmenu(address)
+        accountmenu(address, coin)
+
+def choosecurrency():
+    crypto = input(colored(
+        '\nPlease type in the type of cryptocurrency you would like to investigate. (Bitcoin/BTC or Ethereum/ETH)\n',
+        'blue'))
+
+    coin = crypto.upper()
+    match coin:
+        case 'BTC':
+            from addressdata import BTCaccount
+            addr = BTCaccount()
+        case 'XBT':
+            from addressdata import BTCaccount
+            addr = BTCaccount()
+            coin = 'BTC'
+        case 'BITCOIN':
+            from addressdata import BTCaccount
+            addr = BTCaccount()
+            coin = 'BTC'
+        case 'ETHEREUM':
+            from Etherscan import ETHaccount
+            addr = ETHaccount()
+            coin = 'ETH'
+        case 'ETH':
+            from Etherscan import ETHaccount
+            addr = ETHaccount()
+        case 'LITECOIN':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'LTC':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'NEO':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'DASH':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'RIPPLE':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'IOTA':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'MIOTA':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'MONERO':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'XMR':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'PETRO':
+            print('Not implemented yet')
+            choosecurrency()
+        case 'PTR':
+            print('Not implemented yet')
+            choosecurrency()
+        case _:
+            print('Sorry, that was an invalid option')
+            choosecurrency()
+
+    accountmenu(addr, coin)
 
 
-account()
+def currencyTX(addr, maximum, coin):
+    match coin.upper():
+        case 'BTC':
+            from addressdata import gettransactions
+            from addressdata import accounttransactions
+            r = gettransactions(addr, maximum)
+            accounttransactions(r, maximum, addr)
+        case 'ETH':
+            from Etherscan import gettransactions
+            gettransactions(addr, maximum)
+        case _:
+            print('Error')
+
+    print(coin)
+
+    return

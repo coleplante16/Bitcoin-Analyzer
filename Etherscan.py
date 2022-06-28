@@ -22,16 +22,24 @@ def getbalance(address):
     return value
 
 
-def gettransactions(address, max):
-    transactions_url = geturl("account", "txlist", address, startblock=0, endblock=99999999, page=1, offset=max,
+def gettransactions(address, maximum):
+    transactions_url = geturl("account", "txlist", address, startblock=0, endblock=99999999, page=1, offset=maximum,
                                     sort="asc")
-    response = get(transactions_url)
-    data = response.json()["result"]
+    try:
+        response = get(transactions_url)
+        data = response.json()["result"]
+    except:
+        print('Error')
+        return
 
     internal_tx_url = geturl("account", "txlistinternal", address, startblock=0, endblock=99999999, page=1,
-                                   offset=max, sort="asc")
-    response2 = get(internal_tx_url)
-    internal = response2.json()["result"]
+                                   offset=maximum, sort="asc")
+    try:
+        response2 = get(internal_tx_url)
+        internal = response2.json()["result"]
+    except:
+        print('Error')
+        return
 
     data.extend(internal)
     data.sort(key=lambda x: int(x['timeStamp']))
@@ -104,5 +112,22 @@ def gettransactions(address, max):
             address + '.xlsx')
 
 
-address = "0x00000000219ab540356cbb839cbe05303d7705fa"
-gettransactions(address, 10000)
+def ETHaccount():
+
+    address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
+    if len(address) != 42:
+        print('\n Sorry, ETH addresses must be 42 characters.')
+    else:
+        pass
+    if address[0] == '0' and address[1] == 'x':
+        pass
+    else:
+        print('\n Sorry, ETH addresses start with 0x')
+
+    print(colored('\nFetching your results. Please wait...\n', 'yellow'))
+    balance = getbalance(address)
+    print('Address: ' + address)
+    from FindPrice import price
+    print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, price(balance, 'ethereum', 'usd')))
+
+    return address

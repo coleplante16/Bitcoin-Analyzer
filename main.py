@@ -52,8 +52,8 @@ def main():
         acctEmail()
 
     elif choice == 3:
-        from account import account
-        account()
+        from account import choosecurrency
+        choosecurrency()
 
     elif choice == 4:
         quit()

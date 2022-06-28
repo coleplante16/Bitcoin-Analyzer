@@ -135,7 +135,7 @@ def addressType(sanctiondf, currency):
 
 
 def acceptedCurrencies(cryptoid):
-    v = True
+    v = False
     currencies = pd.DataFrame({
         'Currency': ['Bitcoin', 'Ethereum', 'Litecoin', 'Neo', 'Dash', 'Ripple', 'Iota', 'Monero', 'Petro'],
         'ID': ['XBT', 'ETH', 'LTC', 'NEO', 'DASH', 'XRP', 'MIOTA', 'XMR', 'PTR']})
