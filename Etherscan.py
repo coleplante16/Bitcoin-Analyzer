@@ -23,7 +23,12 @@ def getbalance(address):
 
 
 def gettransactions(address, maximum):
-    transactions_url = geturl("account", "txlist", address, startblock=0, endblock=99999999, page=1, offset=maximum,
+    if int(maximum) > 10000:
+        offset = 10000
+    else:
+        offset = maximum
+
+    transactions_url = geturl("account", "txlist", address, startblock=0, endblock=99999999, page=1, offset=offset,
                                     sort="asc")
     try:
         response = get(transactions_url)
@@ -33,7 +38,7 @@ def gettransactions(address, maximum):
         return
 
     internal_tx_url = geturl("account", "txlistinternal", address, startblock=0, endblock=99999999, page=1,
-                                   offset=maximum, sort="asc")
+                                   offset=offset, sort="asc")
     try:
         response2 = get(internal_tx_url)
         internal = response2.json()["result"]
@@ -44,6 +49,7 @@ def gettransactions(address, maximum):
     data.extend(internal)
     data.sort(key=lambda x: int(x['timeStamp']))
     data.reverse()
+    data = data[:int(maximum)]
 
     addr_list = []
     current_balance = getbalance(address)
@@ -95,8 +101,9 @@ def gettransactions(address, maximum):
 
         # Create Excel writer object
         with pd.ExcelWriter(address + ".xlsx") as writer:
-            # Add linked address dataframe as a sheet
-            linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
+            if len(linkedaddrs.index) > 0:
+                # Add linked address dataframe as a sheet
+                linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
 
             # Add sanction dataframe as a sheet
             from OfacXML import xmlsearch
@@ -128,6 +135,6 @@ def ETHaccount():
     balance = getbalance(address)
     print('Address: ' + address)
     from FindPrice import price
-    print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, price(balance, 'ethereum', 'usd')))
+    print('Current Balance: {:.8f} ETH ${:,.2f} USD'.format(balance, price(balance, 'ethereum', 'usd')))
 
     return address

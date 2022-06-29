@@ -13,6 +13,18 @@ def acceptedcoin(coinid):
     return check
 
 
+def symboltoid(coin):
+    URL = 'https://api.coingecko.com/api/v3/coins/list'
+    r = requests.get(URL).json()
+    for i in r:
+        if i.get('id') == coin:
+            return coin
+    for i in r:
+        if i.get('symbol') == coin:
+            return i.get('id')
+    return coin
+
+
 # check if given currency is accepted by api
 def acceptedcurrency(currency):
     URL = 'https://api.coingecko.com/api/v3/simple/supported_vs_currencies'
@@ -32,12 +44,19 @@ def acceptedcurrency(currency):
 #   currency to convert to
 # returns
 #   up-to-date value of given cryptocurrency in given currency
-def price(amount, coin, currency):
+def price(coin, currency):
+    coin = symboltoid(coin)
+    if currency == 'usd':
+        pass
+    elif not acceptedcurrency(currency):
+        print('ERROR: Not an accepted currency')
+        return -1
+
     URL = ("https://api.coingecko.com/api/v3/simple/price?ids=" + coin + "&vs_currencies=" + currency)
     base = requests.get(URL).json()
     index = base.get(coin)
     conversion = index.get(currency)
-    return amount * conversion
+    return conversion
 
 
 # Convert amount of bitcoin to USD
@@ -64,5 +83,4 @@ def test():
     print('\nConversion')
     converted = price(value, coin, currency)
     print(value, " ", coin, " = ", converted, " ", currency)
-
 

@@ -47,7 +47,7 @@ def accountmenu(address, coin):
             df.to_csv(address + '.csv')
             print(
                 '\nYour potential links can be found in the same folder in which you saved this program.\n \nThe file is named:\n',
-                account.address + '.csv')
+                address + '.csv')
             print(colored(
                 '\nBe Sure to note the poster\'s account or username, \nthey may be the one who owns the bitcoin account',
                 'red'))
