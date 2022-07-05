@@ -38,11 +38,16 @@ def printaccountdata(address, r):
     from OfacXML import xmlsearch
     sanctioned = xmlsearch(address)
 
+    coin = 'btc'
+    currency = 'usd'
+    from FindPrice import price
+    convert = price(coin.lower(), currency.lower())
+
     # print out info
     print('Address: ' + address)
-    print('Total Received: {:.8f} BTC ${:,.2f} USD'.format(received, btctousd(received)))
-    print('Total Sent: {:.8f} BTC ${:,.2f} USD'.format(sent, btctousd(sent)))
-    print('Current Balance: {:.8f} BTC ${:,.2f} USD'.format(balance, btctousd(balance)))
+    print('Total Received: {:.8f} {} ${:,.2f} {}'.format(received, coin.upper(), received * convert, currency.upper()))
+    print('Total Sent: {:.8f} {} ${:,.2f} {}'.format(sent, coin.upper(), sent * convert, currency.upper()))
+    print('Current Balance: {:.8f} {} ${:,.2f} {}'.format(balance, coin.upper(), balance * convert, currency.upper()))
     print('Total Transactions: ', totaltransactions)
 
     # print that sanction was found
@@ -239,7 +244,9 @@ def accounttransactions(r, txs, addr):
         # Create Excel writer object
         with pd.ExcelWriter(addr + ".xlsx") as writer:
             i = 0
-            linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
+            if len(linkedaddrs.index) > 0:
+                # Add linked address dataframe as a sheet
+                linkedaddrs.to_excel(writer, sheet_name='Linked Addresses', index=True)
 
             from OfacXML import xmlsearch
             sanctioned = xmlsearch(addr)
