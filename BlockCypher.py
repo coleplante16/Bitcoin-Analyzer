@@ -6,6 +6,9 @@ import datetime
 key = '398307359db341d5a7f9f31ce32030ef'
 
 
+# for base conversion
+# satoshi to BTC
+# wei to ETH
 def convertbase(coin):
     match coin:
         case 'ETH':
@@ -14,16 +17,20 @@ def convertbase(coin):
             return 100000000
 
 
+# collects and prints basic information for a given address
 def overview(addr, coin, currency):
+    # cannot use sdk for eth yet
     if coin.upper() == 'ETH':
         URL = 'https://api.blockcypher.com/v1/eth/main/addrs/' + addr + '/balance'
         r = requests.get(URL).json()
     else:
         r = bc.get_address_overview(addr, coin_symbol=coin.lower(), api_key=key)
+    # get base conversion for given coin
     base = convertbase(coin)
+
     # record basic info on address
-    received = (r.get('total_received')) / base    # this conversion value will have to change based on currency
-    sent = (r.get('total_sent')) / base            # currently works for BTC, LTC, DASH
+    received = (r.get('total_received')) / base
+    sent = (r.get('total_sent')) / base
     balance = (r.get('final_balance')) / base
     totaltransactions = r.get('n_tx')
 
@@ -31,6 +38,7 @@ def overview(addr, coin, currency):
     from OfacXML import xmlsearch
     sanctioned = xmlsearch(addr)
 
+    # get conversion from crypto to standard currency
     from FindPrice import price
     convert = price(coin.lower(), currency.lower())
 
@@ -53,28 +61,40 @@ def addrfull(addr, coin, currency, limit):
     dataframe_list = []  # list of transaction dataframes
     blank = pd.DataFrame({'A': [' '], 'B': [' '], 'C': [' '], 'D': [' ']})  # blank line for spaces data frames
 
+    # cannot use sdk for eth yet
     if coin.upper() == 'ETH':
         URL = 'https://api.blockcypher.com/v1/eth/main/addrs/' + addr + '/full'
         r = requests.get(URL).json()
         eth = True
     else:
-        r = bc.get_address_full(addr, coin_symbol=coin.lower(), api_key=key)
+        r = bc.get_address_full(addr, coin_symbol=coin.lower(), txn_limit=50, api_key=key)
         eth = False
 
+    # get base conversion for given coin
     base = convertbase(coin)
 
+    # all encompassing list of addresses in transactions
     addr_list = []
 
+    # list of transactions
     txlist = r.get('txs')
+
+    # condense to the max number of transactions requested
+    txlist = txlist[:int(limit)]
+
     txindex = 0
+    # iterate through each transaction in list
     for tx in txlist:
+        # record time of transaction
         tx_time = tx.get('received')
+        # remove time zone so time is compatible with Excel
         if not eth:
-            #import dateutil
-            #tx_time = dateutil.parser.isoparse(tx_time)
             tx_time = tx_time.replace(tzinfo=None)
 
+        # record transaction hash id
         hashid = tx.get('hash')
+
+        # get list of addresses in this transaction and add to full list of addresses
         addrindex = tx.get('addresses')
         for i in addrindex:
             if i != addr:
@@ -82,8 +102,15 @@ def addrfull(addr, coin, currency, limit):
 
         count = 0
         input_df = pd.DataFrame({'A': ['Input:'], 'B': ['Address:'], 'C': ['Value:']})
+
+        # get list of all inputs
         inputlist = tx.get('inputs')
+
+        #  iterate through list of inputs
+        # collect all necessary data and append to input data frame
         for k in inputlist:
+            # one input could technically have multiple addresses listed
+            # this is so that can be recorded
             inputaddrlist = k.get('addresses')
             if len(inputaddrlist) > 1:
                 input_address = ''.join(inputaddrlist)
@@ -110,8 +137,13 @@ def addrfull(addr, coin, currency, limit):
         output_df = pd.DataFrame({'A': ['Output:'], 'B': ['Address:'], 'C': ['Value:']})
         outputlist = tx.get('outputs')
         count = 0
+
+        # iterate through list of outputs
+        # collect all necessary data and append to output data frame
         for output in outputlist:
             outaddrlist = output.get('addresses')
+            # one output could technically have multiple addresses listed
+            # this is so that can be recorded
             if len(outaddrlist) > 1:
                 outputaddr = ''.join(outaddrlist)
                 for addrout in outaddrlist:
@@ -130,6 +162,7 @@ def addrfull(addr, coin, currency, limit):
             count += 1
 
         # Add basic transaction data to top of that transactions dataframe
+        # if result for given address could not be recorded default to total traded in transaction
         try:
             dataframe_list.append(
                 pd.DataFrame(
@@ -163,7 +196,7 @@ def addrfull(addr, coin, currency, limit):
         txindex += 1
 
     from addressdata import addrcount
-# make dataframe of linked addresses
+    # make dataframe of linked addresses
     linkedaddrs = addrcount(addr_list)
     print('\n', (len(linkedaddrs.index)), 'Potentially linked addresses found.')
 
@@ -219,6 +252,7 @@ def overviewtest():
     print('\n{}'.format(coin))
     overview(address, coin, usd)
 
+# test full address data function
 def fulltest():
     import time
     address = '1FfmbHfnpaZjKFvyi1okTjJJusN455paPH'
@@ -233,6 +267,3 @@ def fulltest():
     crypto = 'ETH'
     print('\n{}'.format(crypto))
     addrfull(address, crypto, usd, 10)
-
-
-fulltest()

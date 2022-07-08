@@ -117,24 +117,3 @@ def gettransactions(address, maximum):
         print(
             '\nYour file can be found in the same folder in which you saved this program.\n \nThe file is named:\n' +
             address + '.xlsx')
-
-
-def ETHaccount():
-
-    address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
-    if len(address) != 42:
-        print('\n Sorry, ETH addresses must be 42 characters.')
-    else:
-        pass
-    if address[0] == '0' and address[1] == 'x':
-        pass
-    else:
-        print('\n Sorry, ETH addresses start with 0x')
-
-    print(colored('\nFetching your results. Please wait...\n', 'yellow'))
-    balance = getbalance(address)
-    print('Address: ' + address)
-    from FindPrice import price
-    print('Current Balance: {:.8f} ETH ${:,.2f} USD'.format(balance, price(balance, 'ethereum', 'usd')))
-
-    return address

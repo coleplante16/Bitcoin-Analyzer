@@ -7,6 +7,58 @@ import pyyed
 import numpy
 
 
+# prompt user for address
+# print out basic address data
+def account(coin):
+    approved = False
+    while not approved:
+        address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
+        match coin:
+            case 'ETH':
+                if len(address) != 42:
+                    print('\n Sorry, ETH addresses must be 42 characters.')
+                    approved = False
+                elif address[0] != '0' and address[1] != 'x':
+                    print('\n Sorry, ETH addresses start with 0x')
+                    approved = False
+                else:
+                    approved = True
+
+            case 'BTC':
+                # get overview from blockchain.com
+                from addressdata import BTCaccount
+                return BTCaccount(address)
+
+            case 'LTC':
+                if len(address) == 26 or len(address) == 33 or len(address) == 34:
+                    approved = True
+                else:
+                    print('\n Sorry, that wasn\'t a valid address.')
+                    approved = False
+
+                if address[0] == 'L' or address[0] == 'M' or address[0] == '3':
+                    approved = True
+                else:
+                    print('\n Sorry, Litecoin addresses start with either an M, L, or 3.')
+                    approved = False
+
+            case 'DASH':
+                if len(address) != 34:
+                    print('\n Sorry, that wasn\'t a valid address.')
+                    approved = False
+                elif address[0] != 'X':
+                    print('/n Sorry, DASH addresses start with an uppercase X.')
+                    approved = False
+                else:
+                    approved = True
+
+    print(colored('\nFetching your results. Please wait...\n', 'yellow'))
+    # Eth, LTC, and DASH get overview from block cypher
+    from BlockCypher import overview
+    overview(address, coin, 'USD')
+    return address
+
+
 # Prompt user for what they would like to do next
 def accountmenu(address, coin):
 
@@ -60,8 +112,13 @@ def accountmenu(address, coin):
              colored('\nPlease type in the maximum number of transactions you would like to load.\n', 'blue'))
 
         print(colored('\nFetching your results. Please wait...', 'yellow'))
-        currencyTX(address, end, coin)
-
+        # still collect data for eth and btc from respective apis
+        # able to collect more transactions in less api calls
+        if coin == 'ETH' or coin == 'BTC':
+            currencyTX(address, end, coin)
+        else:
+            from BlockCypher import addrfull
+            addrfull(address, coin, 'USD', end)
         accountmenu(address, coin)
 
         # from Wrangled import Wrangled
@@ -81,43 +138,39 @@ def accountmenu(address, coin):
         print('\n \nSorry, that wasn\'t a choice. Please try again')
         accountmenu(address, coin)
 
+
+# prompt user for cryptocurrency they are investigating
 def choosecurrency():
     crypto = input(colored(
-        '\nPlease type in the type of cryptocurrency you would like to investigate. (Bitcoin/BTC or Ethereum/ETH)\n',
+        '\nPlease type in the type of cryptocurrency you would like to investigate. '
+        '(Bitcoin/BTC, Ethereum/ETH, Litecoin/LTC, DASH)\n',
         'blue'))
 
     coin = crypto.upper()
     match coin:
         case 'BTC':
-            from addressdata import BTCaccount
-            addr = BTCaccount()
+            coin = 'BTC'
         case 'XBT':
-            from addressdata import BTCaccount
-            addr = BTCaccount()
             coin = 'BTC'
         case 'BITCOIN':
-            from addressdata import BTCaccount
-            addr = BTCaccount()
             coin = 'BTC'
         case 'ETHEREUM':
-            from Etherscan import ETHaccount
-            addr = ETHaccount()
+            # from Etherscan import ETHaccount
+            # addr = ETHaccount()
             coin = 'ETH'
         case 'ETH':
-            from Etherscan import ETHaccount
-            addr = ETHaccount()
+            # from Etherscan import ETHaccount
+            # addr = ETHaccount()
+            coin = 'ETH'
         case 'LITECOIN':
-            print('Not implemented yet')
-            choosecurrency()
+            coin = 'LTC'
         case 'LTC':
-            print('Not implemented yet')
-            choosecurrency()
+            coin = 'LTC'
         case 'NEO':
             print('Not implemented yet')
             choosecurrency()
         case 'DASH':
-            print('Not implemented yet')
-            choosecurrency()
+            coin = 'DASH'
         case 'RIPPLE':
             print('Not implemented yet')
             choosecurrency()
@@ -143,9 +196,11 @@ def choosecurrency():
             print('Sorry, that was an invalid option')
             choosecurrency()
 
+    addr = account(coin)
     accountmenu(addr, coin)
 
 
+# collect transactions from blockchain.com api or etherscan api
 def currencyTX(addr, maximum, coin):
     match coin.upper():
         case 'BTC':
@@ -158,7 +213,4 @@ def currencyTX(addr, maximum, coin):
             gettransactions(addr, maximum)
         case _:
             print('Error')
-
-    print(coin)
-
     return

@@ -6,16 +6,20 @@ from termcolor import colored
 from FindPrice import btctousd
 
 
-def BTCaccount():
-    address = input(colored('\nWhat is the address you would like to analyze? \n', 'blue'))
+def BTCaccount(address):
     if len(address) < 26:
         print('\n Sorry, that wasn\'t quite long enough.')
+        from account import account
+        account('BTC')
     else:
         pass
     if address[0] == 1 or 3:
         pass
+    elif address[0] == 'b' and address[1] == 'c' and address[2] == '1':
+        pass
     else:
-        print('/n Sorry, Bitcoin addresses start with either a 1 or a 3.')
+        print('/n Sorry, Bitcoin addresses start with either 1, 3, or bc1.')
+        account('BTC')
 
     print(colored('\nFetching your results. Please wait...\n', 'yellow'))
     r = getdata(address)
