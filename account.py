@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas
-import pyyed
+#import pyyed
 import numpy
 
 
@@ -155,12 +155,8 @@ def choosecurrency():
         case 'BITCOIN':
             coin = 'BTC'
         case 'ETHEREUM':
-            # from Etherscan import ETHaccount
-            # addr = ETHaccount()
             coin = 'ETH'
         case 'ETH':
-            # from Etherscan import ETHaccount
-            # addr = ETHaccount()
             coin = 'ETH'
         case 'LITECOIN':
             coin = 'LTC'
@@ -196,8 +192,9 @@ def choosecurrency():
             print('Sorry, that was an invalid option')
             choosecurrency()
 
-    addr = account(coin)
-    accountmenu(addr, coin)
+    return coin
+    #addr = account(coin)
+    #accountmenu(addr, coin)
 
 
 # collect transactions from blockchain.com api or etherscan api

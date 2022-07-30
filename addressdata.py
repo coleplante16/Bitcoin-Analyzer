@@ -169,7 +169,7 @@ def accounttransactions(r, txs, addr):
             # Collect input data
             input_index = (input_data['index'] + 1)
             input_address = input_data_list['addr']
-            input_value = (input_data_list['value']) / 100000000
+            input_value = -(input_data_list['value']) / 100000000
             input_spent = input_data_list['spent']
 
             if input_address != addr:
@@ -265,8 +265,11 @@ def accounttransactions(r, txs, addr):
         print(
             '\nYour file can be found in the same folder in which you saved this program.\n \nThe file is named:\n' +
             addr + '.xlsx')
-
-    return
+    
+    #from Untitled.ipynb import buildgraph
+    #graph = buildgraph(addr, addrdict)
+    #graph.show()
+    return addr_list
 
 
 # dump all recorded data

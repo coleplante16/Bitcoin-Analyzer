@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import pandas
-import pyyed
+#import pyyed
 import numpy
 import os
 import sys
@@ -53,7 +53,11 @@ def main():
 
     elif choice == 3:
         from account import choosecurrency
-        choosecurrency()
+        coin = choosecurrency()
+        from account import account
+        addr = account(coin)
+        from account import accountmenu
+        accountmenu(addr, coin)
 
     elif choice == 4:
         quit()
@@ -85,4 +89,4 @@ def welcome():
     main()
 
 
-welcome()
+#welcome()
