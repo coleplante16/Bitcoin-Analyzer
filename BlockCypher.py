@@ -10,10 +10,9 @@ key = '398307359db341d5a7f9f31ce32030ef'
 # satoshi to BTC
 # wei to ETH
 def convertbase(coin):
-    match coin:
-        case 'ETH':
+        if coin == 'ETH':
             return 1000000000000000000
-        case _:
+        else:
             return 100000000
 
 
@@ -43,18 +42,19 @@ def overview(addr, coin, currency):
     convert = price(coin.lower(), currency.lower())
 
     # print out info
-    print('Address: ' + addr)
-    print('Total Received: {:.8f} {} ${:,.2f} {}'.format(received, coin.upper(), received * convert, currency.upper()))
-    print('Total Sent: {:.8f} {} ${:,.2f} {}'.format(sent, coin.upper(), sent * convert, currency.upper()))
-    print('Current Balance: {:.8f} {} ${:,.2f} {}'.format(balance, coin.upper(), balance * convert, currency.upper()))
-    print('Total Transactions: ', totaltransactions)
+    out = {('Address: ' + addr),
+    ('\nTotal Received: {:.8f} {} ${:,.2f} {}'.format(received, coin.upper(), received * convert, currency.upper())),
+    ('\nTotal Sent: {:.8f} {} ${:,.2f} {}'.format(sent, coin.upper(), sent * convert, currency.upper())),
+    ('\nCurrent Balance: {:.8f} {} ${:,.2f} {}'.format(balance, coin.upper(), balance * convert, currency.upper())),
+    ('\nTotal Transactions: ', totaltransactions)}
 
     # print that sanction was found
     if not sanctioned.empty:
-        print('!This address was found on a list of OFAC sanctioned addresses!')
-        printinfo = input(colored('\nPrint sanction info? (Y/N):\n', 'blue'))
-        if printinfo.upper() == "Y" or printinfo.upper() == "YES":
-            print(sanctioned)
+        out += ('\n!This address was found on a list of OFAC sanctioned addresses!')
+        #printinfo = input(colored('\nPrint sanction info? (Y/N):\n', 'blue'))
+        #if printinfo.upper() == "Y" or printinfo.upper() == "YES":
+            #print(sanctioned)
+    return out
 
 
 def addrfull(addr, coin, currency, limit):
@@ -226,6 +226,8 @@ def addrfull(addr, coin, currency, limit):
         print(
             '\nYour file can be found in the same folder in which you saved this program.\n \nThe file is named:\n' +
             addr + '.xlsx')
+        
+    return addr_list
 
 
 # test overview function

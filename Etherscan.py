@@ -117,3 +117,4 @@ def gettransactions(address, maximum):
         print(
             '\nYour file can be found in the same folder in which you saved this program.\n \nThe file is named:\n' +
             address + '.xlsx')
+    return addr_list

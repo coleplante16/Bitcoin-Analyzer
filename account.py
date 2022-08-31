@@ -26,8 +26,19 @@ def account(coin):
 
             case 'BTC':
                 # get overview from blockchain.com
-                from addressdata import BTCaccount
-                return BTCaccount(address)
+                if len(address) < 26:
+                    print('\n Sorry, that wasn\'t quite long enough.')
+                    from account import account
+                    account('BTC')
+                else:
+                    pass
+                if address[0] == 1 or 3:
+                    pass
+                elif address[0] == 'b' and address[1] == 'c' and address[2] == '1':
+                    pass
+                else:
+                    print('/n Sorry, Bitcoin addresses start with either 1, 3, or bc1.')
+                    account('BTC')
 
             case 'LTC':
                 if len(address) == 26 or len(address) == 33 or len(address) == 34:
